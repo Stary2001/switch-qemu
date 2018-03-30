@@ -87,7 +87,7 @@ static int qemu_mprotect__osdep(void *addr, size_t size, int prot)
         return -1;
     }
     return 0;
-#else
+#elif !defined(SWITCH)
     if (mprotect(addr, size, prot)) {
         error_report("%s: mprotect failed: %s", __func__, strerror(errno));
         return -1;
@@ -100,6 +100,8 @@ int qemu_mprotect_rwx(void *addr, size_t size)
 {
 #ifdef _WIN32
     return qemu_mprotect__osdep(addr, size, PAGE_EXECUTE_READWRITE);
+#elif defined(SWITCH)
+    return 0;
 #else
     return qemu_mprotect__osdep(addr, size, PROT_READ | PROT_WRITE | PROT_EXEC);
 #endif
@@ -109,6 +111,8 @@ int qemu_mprotect_none(void *addr, size_t size)
 {
 #ifdef _WIN32
     return qemu_mprotect__osdep(addr, size, PAGE_NOACCESS);
+#elif defined(SWITCH)
+    return 0;
 #else
     return qemu_mprotect__osdep(addr, size, PROT_NONE);
 #endif
@@ -429,7 +433,7 @@ int qemu_accept(int s, struct sockaddr *addr, socklen_t *addrlen)
 {
     int ret;
 
-#ifdef CONFIG_ACCEPT4
+#if defined(CONFIG_ACCEPT4) && !defined(SWITCH)
     ret = accept4(s, addr, addrlen, SOCK_CLOEXEC);
     if (ret != -1 || errno != ENOSYS) {
         return ret;

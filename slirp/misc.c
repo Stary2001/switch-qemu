@@ -69,7 +69,7 @@ fork_exec(struct socket *so, const char *ex, int do_pty)
     return 0;
 }
 
-#else
+#elif !defined(SWITCH)
 
 /*
  * XXX This is ugly
@@ -202,6 +202,12 @@ fork_exec(struct socket *so, const char *ex, int do_pty)
 
 		return 1;
 	}
+}
+#else
+int
+fork_exec(struct socket *so, const char *ex, int do_pty)
+{
+  return 1;
 }
 #endif
 

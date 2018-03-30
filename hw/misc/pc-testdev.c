@@ -35,6 +35,8 @@
  * git://git.kernel.org/pub/scm/virt/kvm/kvm-unit-tests.git
 */
 
+#ifndef SWITCH
+
 #include "qemu/osdep.h"
 #include "hw/hw.h"
 #include "hw/qdev.h"
@@ -202,3 +204,5 @@ static void testdev_register_types(void)
 }
 
 type_init(testdev_register_types)
+
+#endif

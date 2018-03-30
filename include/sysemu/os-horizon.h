@@ -1,5 +1,5 @@
 /*
- * posix specific declarations
+ * horizon specific declarations
  *
  * Copyright (c) 2003-2008 Fabrice Bellard
  * Copyright (c) 2010 Jes Sorensen <Jes.Sorensen@redhat.com>
@@ -34,28 +34,36 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#ifndef SWITCH
-#include <sys/un.h>
-#endif
 
 #ifdef CONFIG_SYSMACROS
 #include <sys/sysmacros.h>
 #endif
 
+static inline void os_setup_signal_handling(void) {}
+static inline void os_daemonize(void) {}
+static inline void os_setup_post(void) {}
 void os_set_line_buffering(void);
-void os_set_proc_name(const char *s);
-void os_setup_signal_handling(void);
-void os_daemonize(void);
-void os_setup_post(void);
-int os_mlock(void);
+static inline void os_set_proc_name(const char *dummy) {}
 
-#define closesocket(s) close(s)
-#define ioctlsocket(s, r, v) ioctl(s, r, v)
+#if !defined(EPROTONOSUPPORT)
+# define EPROTONOSUPPORT EINVAL
+#endif
 
 typedef struct timeval qemu_timeval;
 #define qemu_gettimeofday(tp) gettimeofday(tp, NULL)
 
-bool is_daemonized(void);
+static inline bool is_daemonized(void)
+{
+    return false;
+}
+
+static inline int os_mlock(void)
+{
+    return -ENOSYS;
+}
+
+#define closesocket(s) close(s)
+#define ioctlsocket(s, r, v) ioctl(s, r, v)
 
 /**
  * qemu_alloc_stack:
@@ -88,12 +96,17 @@ void qemu_free_stack(void *stack, size_t sz);
 
 static inline void qemu_flockfile(FILE *f)
 {
-    flockfile(f);
+    //flockfile(f);
 }
 
 static inline void qemu_funlockfile(FILE *f)
 {
-    funlockfile(f);
+    //funlockfile(f);
 }
 
 #endif
+
+
+#define sigjmp_buf jmp_buf
+#define sigsetjmp(env, savemask) setjmp(env)
+#define siglongjmp(env, val) longjmp(env, val)

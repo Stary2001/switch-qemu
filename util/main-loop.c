@@ -34,7 +34,7 @@
 #include "block/aio.h"
 #include "qemu/error-report.h"
 
-#ifndef _WIN32
+#if !defined _WIN32 && !defined SWITCH
 
 /* If we have signalfd, we mask out the signals we want to handle and then
  * use signalfd to listen for them.  We rely on whatever the current signal

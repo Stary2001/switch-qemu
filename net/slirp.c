@@ -95,7 +95,7 @@ static int slirp_hostfwd(SlirpState *s, const char *redir_str,
 static int slirp_guestfwd(SlirpState *s, const char *config_str,
                           int legacy_format, Error **errp);
 
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(SWITCH)
 static const char *legacy_smb_export;
 
 static int slirp_smb(SlirpState *s, const char *exported_dir,
@@ -385,7 +385,7 @@ static int net_slirp_init(NetClientState *peer, const char *model,
             }
         }
     }
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(SWITCH)
     if (!smb_export) {
         smb_export = legacy_smb_export;
     }
@@ -608,7 +608,7 @@ int net_slirp_redir(const char *redir_str)
     return res;
 }
 
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(SWITCH)
 
 /* automatic user mode samba server configuration */
 static void slirp_smb_cleanup(SlirpState *s)
@@ -637,6 +637,7 @@ static int slirp_smb(SlirpState* s, const char *exported_dir,
     char *smb_cmdline;
     struct passwd *passwd;
     FILE *f;
+
 
     passwd = getpwuid(geteuid());
     if (!passwd) {

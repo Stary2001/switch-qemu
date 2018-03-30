@@ -9,7 +9,9 @@
 #define _TPM_IOCTL_H_
 
 #include <stdint.h>
+#ifndef SWITCH
 #include <sys/uio.h>
+#endif
 #include <sys/types.h>
 #include <sys/ioctl.h>
 

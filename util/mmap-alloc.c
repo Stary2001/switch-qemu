@@ -10,6 +10,7 @@
  * later.  See the COPYING file in the top-level directory.
  */
 
+#ifndef SWITCH
 #include "qemu/osdep.h"
 #include "qemu/mmap-alloc.h"
 #include "qemu/host-utils.h"
@@ -132,3 +133,5 @@ void qemu_ram_munmap(void *ptr, size_t size)
         munmap(ptr, size + getpagesize());
     }
 }
+
+#endif

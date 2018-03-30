@@ -12,6 +12,7 @@
  * Contributions after 2012-01-13 are licensed under the terms of the
  * GNU GPL, version 2 or (at your option) any later version.
  */
+#ifndef SWITCH
 
 #include "qemu/osdep.h"
 #include "qemu-common.h"
@@ -108,3 +109,5 @@ int qemu_signalfd(const sigset_t *mask)
 
     return qemu_signalfd_compat(mask);
 }
+
+#endif

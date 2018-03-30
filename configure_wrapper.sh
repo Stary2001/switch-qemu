@@ -1,0 +1,1 @@
+./configure --cross-prefix=aarch64-none-elf- --python=`which python2` --cpu=aarch64 --force-os=Horizon --extra-cflags="-I$DEVKITPRO/portlibs/switch/include" --extra-ldflags="-L$DEVKITPRO/portlibs/switch/lib"

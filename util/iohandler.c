@@ -76,7 +76,7 @@ void event_notifier_set_handler(EventNotifier *e,
 
 /* reaping of zombies.  right now we're not passing the status to
    anyone, but it would be possible to add a callback.  */
-#ifndef _WIN32
+#if !defined _WIN32 && !defined SWITCH
 typedef struct ChildProcessRecord {
     int pid;
     QLIST_ENTRY(ChildProcessRecord) next;

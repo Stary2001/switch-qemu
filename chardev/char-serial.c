@@ -30,7 +30,9 @@
 #include "chardev/char-win.h"
 #else
 #include <sys/ioctl.h>
+#ifndef SWITCH
 #include <termios.h>
+#endif
 #include "chardev/char-fd.h"
 #endif
 

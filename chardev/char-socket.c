@@ -473,7 +473,7 @@ static char *sockaddr_to_str(struct sockaddr_storage *ss, socklen_t ss_len,
     const char *left = "", *right = "";
 
     switch (ss->ss_family) {
-#ifndef _WIN32
+#if !defined _WIN32 && !defined SWITCH
     case AF_UNIX:
         return g_strdup_printf("unix:%s%s",
                                ((struct sockaddr_un *)(ss))->sun_path,

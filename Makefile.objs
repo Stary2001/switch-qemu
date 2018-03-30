@@ -45,6 +45,7 @@ common-obj-y += net/
 common-obj-y += qdev-monitor.o device-hotplug.o
 common-obj-$(CONFIG_WIN32) += os-win32.o
 common-obj-$(CONFIG_POSIX) += os-posix.o
+common-obj-$(CONFIG_HORIZON) += os-horizon.o
 
 common-obj-$(CONFIG_LINUX) += fsdev/
 

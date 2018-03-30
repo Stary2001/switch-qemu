@@ -80,7 +80,7 @@ static void sys_cache_info(int *isize, int *dsize)
     }
 }
 
-#else
+#elif defined(CONFIG_POSIX)
 /* POSIX */
 
 static void sys_cache_info(int *isize, int *dsize)
@@ -91,6 +91,11 @@ static void sys_cache_info(int *isize, int *dsize)
 # ifdef _SC_LEVEL1_DCACHE_LINESIZE
     *dsize = sysconf(_SC_LEVEL1_DCACHE_LINESIZE);
 # endif
+}
+
+#elif defined(CONFIG_HORIZON)
+static void sys_cache_info(int *isize, int *dsize)
+{
 }
 #endif /* sys_cache_info */
 

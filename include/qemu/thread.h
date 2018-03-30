@@ -13,8 +13,10 @@ typedef struct QemuThread QemuThread;
 
 #ifdef _WIN32
 #include "qemu/thread-win32.h"
-#else
+#elif !defined SWITCH
 #include "qemu/thread-posix.h"
+#else
+#include "qemu/thread-horizon.h"
 #endif
 
 #define QEMU_THREAD_JOINABLE 0

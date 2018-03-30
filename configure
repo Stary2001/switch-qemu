@@ -422,6 +422,7 @@ tcmalloc="no"
 jemalloc="no"
 replication="yes"
 vxhs=""
+horizon="no"
 
 supported_cpu="no"
 supported_os="no"
@@ -440,6 +441,8 @@ for opt do
   --source-path=*) source_path="$optarg"
   ;;
   --cpu=*) cpu="$optarg"
+  ;;
+  --force-os=*) targetos="$optarg"
   ;;
   --extra-cflags=*) QEMU_CFLAGS="$QEMU_CFLAGS $optarg"
                     EXTRA_CFLAGS="$optarg"
@@ -547,6 +550,7 @@ int main(void) { return 0; }
 EOF
 }
 
+if test -z "${targetos}"; then
 if check_define __linux__ ; then
   targetos="Linux"
 elif check_define _WIN32 ; then
@@ -573,6 +577,7 @@ else
   # be the result of a missing compiler.
   targetos='bogus'
   bogus_os='yes'
+fi
 fi
 
 # Some host OSes need non-standard checks for which CPU to use.
@@ -791,6 +796,10 @@ Linux)
   QEMU_INCLUDES="-I\$(SRC_PATH)/linux-headers -I$(pwd)/linux-headers $QEMU_INCLUDES"
   supported_os="yes"
 ;;
+Horizon)
+  horizon="yes"
+  supported_os="yes"
+;;
 esac
 
 if [ "$bsd" = "yes" ] ; then
@@ -889,6 +898,8 @@ for opt do
       modules="no"
   ;;
   --cpu=*)
+  ;;
+  --force-os=*)
   ;;
   --target-list=*) target_list="$optarg"
   ;;
@@ -3444,8 +3455,10 @@ else
 fi
 
 if test "$mingw32" != yes -a "$pthread" = no; then
+  if test "$targetos" != Horizon; then
   error_exit "pthread check failed" \
       "Make sure to have the pthread libs and headers installed."
+  fi
 fi
 
 # check for pthread_setname_np
@@ -4274,7 +4287,7 @@ elif compile_prog "" "$pthread_lib -lrt" ; then
 fi
 
 if test "$darwin" != "yes" -a "$mingw32" != "yes" -a "$solaris" != yes -a \
-        "$haiku" != "yes" ; then
+        "$haiku" != "yes" -a "$horizon" != "yes"; then
     libs_softmmu="-lutil $libs_softmmu"
 fi
 
@@ -5659,7 +5672,11 @@ if test "$mingw32" = "yes" ; then
     echo "QEMU_GA_VERSION=${QEMU_GA_VERSION}" >> $config_host_mak
   fi
 else
-  echo "CONFIG_POSIX=y" >> $config_host_mak
+  if test "$horizon" != "yes"; then
+    echo "CONFIG_POSIX=y" >> $config_host_mak
+  else
+    echo "CONFIG_HORIZON=y" >> $config_host_mak
+  fi
 fi
 
 if test "$linux" = "yes" ; then

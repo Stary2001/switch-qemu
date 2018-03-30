@@ -651,7 +651,7 @@ static inline void *alloc_code_gen_buffer(void)
                         PAGE_EXECUTE_READWRITE);
     return buf;
 }
-#else
+#elif !defined(SWITCH)
 static inline void *alloc_code_gen_buffer(void)
 {
     int prot = PROT_WRITE | PROT_READ | PROT_EXEC;
@@ -729,6 +729,11 @@ static inline void *alloc_code_gen_buffer(void)
     qemu_madvise(buf, size, QEMU_MADV_HUGEPAGE);
 
     return buf;
+}
+#else
+static inline void *alloc_code_gen_buffer(void)
+{
+    return NULL;
 }
 #endif /* USE_STATIC_CODE_GEN_BUFFER, WIN32, POSIX */
 

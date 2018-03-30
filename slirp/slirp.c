@@ -121,7 +121,7 @@ static void winsock_cleanup(void)
     WSACleanup();
 }
 
-#else
+#elif !defined SWITCH
 
 static int get_dns_addr_cached(void *pdns_addr, void *cached_addr,
                                socklen_t addrlen,
@@ -245,6 +245,17 @@ int get_dns6_addr(struct in6_addr *pdns6_addr, uint32_t *scope_id)
     return get_dns_addr_resolv_conf(AF_INET6, pdns6_addr, &dns6_addr,
                                     sizeof(dns6_addr),
                                     scope_id, &dns6_addr_time);
+}
+
+#else
+int get_dns_addr(struct in_addr *pdns_addr)
+{
+    return -1;
+}
+
+int get_dns6_addr(struct in6_addr *pdns6_addr, uint32_t *scope_id)
+{
+    return -1;
 }
 
 #endif

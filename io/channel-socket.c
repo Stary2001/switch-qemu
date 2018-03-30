@@ -400,7 +400,7 @@ static void qio_channel_socket_finalize(Object *obj)
 }
 
 
-#ifndef WIN32
+#if !defined WIN32 && !defined SWITCH
 static void qio_channel_socket_copy_fds(struct msghdr *msg,
                                         int **fds, size_t *nfds)
 {

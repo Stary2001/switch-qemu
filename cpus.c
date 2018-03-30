@@ -1142,7 +1142,7 @@ static void *qemu_kvm_cpu_thread_fn(void *arg)
 
 static void *qemu_dummy_cpu_thread_fn(void *arg)
 {
-#ifdef _WIN32
+#if !defined _WIN32 || !defined SWITCH
     fprintf(stderr, "qtest is not supported under Windows\n");
     exit(1);
 #else
@@ -1512,7 +1512,7 @@ static void *qemu_tcg_cpu_thread_fn(void *arg)
 
 static void qemu_cpu_kick_thread(CPUState *cpu)
 {
-#ifndef _WIN32
+#if !defined _WIN32 && !defined SWITCH
     int err;
 
     if (cpu->thread_kicked) {
@@ -1524,7 +1524,7 @@ static void qemu_cpu_kick_thread(CPUState *cpu)
         fprintf(stderr, "qemu:%s: %s", __func__, strerror(err));
         exit(1);
     }
-#else /* _WIN32 */
+#elif defined _WIN32
     if (!qemu_cpu_is_self(cpu)) {
         if (!QueueUserAPC(dummy_apc_func, cpu->hThread, 0)) {
             fprintf(stderr, "%s: QueueUserAPC failed with error %lu\n",
@@ -1532,6 +1532,9 @@ static void qemu_cpu_kick_thread(CPUState *cpu)
             exit(1);
         }
     }
+#else
+    fprintf(stderr, "lol, kick_thread?");
+    exit(1);
 #endif
 }
 

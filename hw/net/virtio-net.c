@@ -536,8 +536,11 @@ static int peer_attach(VirtIONet *n, int index)
     if (n->max_queues == 1) {
         return 0;
     }
-
+    #ifndef SWITCH
     return tap_enable(nc->peer);
+    #else
+    return -1;
+    #endif
 }
 
 static int peer_detach(VirtIONet *n, int index)
@@ -555,8 +558,11 @@ static int peer_detach(VirtIONet *n, int index)
     if (nc->peer->info->type !=  NET_CLIENT_DRIVER_TAP) {
         return 0;
     }
-
+    #ifndef SWITCH
     return tap_disable(nc->peer);
+    #else
+    return -1;
+    #endif
 }
 
 static void virtio_net_set_queues(VirtIONet *n)
