@@ -4663,6 +4663,8 @@ else
     # coroutine-*.c filename for this case, so we have to adjust it here.
     coroutine=win32
     ;;
+  switch)
+    ;;
   ucontext)
     if test "$ucontext_works" != "yes"; then
       feature_not_found "ucontext"
