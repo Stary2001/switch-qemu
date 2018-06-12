@@ -262,6 +262,10 @@ void info_vreport(const char *fmt, va_list ap)
     vreport(REPORT_TYPE_INFO, fmt, ap);
 }
 
+#ifdef __SWITCH__
+#include <switch.h>
+#endif
+
 /*
  * Print an error message to current monitor if we have one, else to stderr.
  * Format arguments like sprintf().  The resulting message should be
@@ -276,6 +280,20 @@ void error_report(const char *fmt, ...)
     va_start(ap, fmt);
     vreport(REPORT_TYPE_ERROR, fmt, ap);
     va_end(ap);
+#ifdef __SWITCH__
+	printf("we got an error! press a to exit.\n");
+	while(appletMainLoop())
+	{
+		hidScanInput();
+		if(hidKeysDown(CONTROLLER_P1_AUTO)&KEY_A)
+		{
+			return;
+		}
+		gfxFlushBuffers();
+		gfxSwapBuffers();
+		gfxWaitForVsync();
+	}
+#endif
 }
 
 /*

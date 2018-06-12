@@ -32,6 +32,10 @@
 #include "sys/prctl.h"
 #endif
 
+#ifdef __SWITCH__
+#include <switch.h>
+#endif
+
 #ifdef CONFIG_SDL
 #if defined(__APPLE__) || defined(main)
 #include <SDL.h>
@@ -3132,6 +3136,13 @@ int main(int argc, char **argv, char **envp)
     } BlockdevOptions_queue;
     QSIMPLEQ_HEAD(, BlockdevOptions_queue) bdo_queue
         = QSIMPLEQ_HEAD_INITIALIZER(bdo_queue);
+
+
+#ifdef __SWITCH__
+	gfxInitDefault();
+	consoleInit(NULL);
+	printf("Hi from switch!\n");
+#endif
 
     module_call_init(MODULE_INIT_TRACE);
 
