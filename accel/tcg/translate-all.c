@@ -651,7 +651,7 @@ static inline void *alloc_code_gen_buffer(void)
                         PAGE_EXECUTE_READWRITE);
     return buf;
 }
-#elif !defined(SWITCH)
+#elif !defined(__SWITCH__)
 static inline void *alloc_code_gen_buffer(void)
 {
     int prot = PROT_WRITE | PROT_READ | PROT_EXEC;

@@ -1142,7 +1142,7 @@ static void *qemu_kvm_cpu_thread_fn(void *arg)
 
 static void *qemu_dummy_cpu_thread_fn(void *arg)
 {
-#if !defined _WIN32 || !defined SWITCH
+#if !defined _WIN32 || !defined __SWITCH__
     fprintf(stderr, "qtest is not supported under Windows\n");
     exit(1);
 #else
@@ -1512,7 +1512,7 @@ static void *qemu_tcg_cpu_thread_fn(void *arg)
 
 static void qemu_cpu_kick_thread(CPUState *cpu)
 {
-#if !defined _WIN32 && !defined SWITCH
+#if !defined _WIN32 && !defined __SWITCH__
     int err;
 
     if (cpu->thread_kicked) {

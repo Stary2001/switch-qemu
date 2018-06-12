@@ -426,7 +426,7 @@ bool qemu_has_ofd_lock(void);
 int qemu_create_pidfile(const char *filename);
 int qemu_get_thread_id(void);
 
-#if !defined CONFIG_IOVEC && !defined SWITCH
+#if !defined CONFIG_IOVEC && !defined __SWITCH__
 struct iovec {
     void *iov_base;
     size_t iov_len;
@@ -438,7 +438,7 @@ struct iovec {
 
 ssize_t readv(int fd, const struct iovec *iov, int iov_cnt);
 ssize_t writev(int fd, const struct iovec *iov, int iov_cnt);
-#elif !defined SWITCH
+#elif !defined __SWITCH__
 #include <sys/uio.h>
 #endif
 

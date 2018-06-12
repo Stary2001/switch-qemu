@@ -68,7 +68,7 @@
 #include "migration/vmstate.h"
 
 #include "qemu/range.h"
-#if !defined _WIN32 && !defined SWITCH
+#if !defined _WIN32 && !defined __SWITCH__
 #include "qemu/mmap-alloc.h"
 #endif
 
@@ -2112,7 +2112,7 @@ static void reclaim_ramblock(RAMBlock *block)
         ;
     } else if (xen_enabled()) {
         xen_invalidate_map_cache_entry(block->host);
-#if !defined _WIN32 && !defined SWITCH
+#if !defined _WIN32 && !defined __SWITCH__
     } else if (block->fd >= 0) {
         qemu_ram_munmap(block->host, block->max_length);
         close(block->fd);
@@ -2143,7 +2143,7 @@ void qemu_ram_free(RAMBlock *block)
     qemu_mutex_unlock_ramlist();
 }
 
-#if !defined _WIN32 && !defined SWITCH
+#if !defined _WIN32 && !defined __SWITCH__
 void qemu_ram_remap(ram_addr_t addr, ram_addr_t length)
 {
     RAMBlock *block;

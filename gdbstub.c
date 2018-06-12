@@ -1776,7 +1776,7 @@ static void gdb_accept(void)
             perror("accept");
             return;
         } else if (fd >= 0) {
-#if !defined _WIN32 && !defined SWITCH
+#if !defined _WIN32 && !defined __SWITCH__
             fcntl(fd, F_SETFD, FD_CLOEXEC);
 #endif
             break;
@@ -1805,7 +1805,7 @@ static int gdbserver_open(int port)
         perror("socket");
         return -1;
     }
-#if !defined _WIN32 && !defined SWITCH
+#if !defined _WIN32 && !defined __SWITCH__
     fcntl(fd, F_SETFD, FD_CLOEXEC);
 #endif
 
@@ -1910,7 +1910,7 @@ static int gdb_monitor_write(Chardev *chr, const uint8_t *buf, int len)
     return len;
 }
 
-#if !defined _WIN32 && !defined SWITCH
+#if !defined _WIN32 && !defined __SWITCH__
 static void gdb_sigterm_handler(int signal)
 {
     if (runstate_is_running()) {
@@ -1964,7 +1964,7 @@ int gdbserver_start(const char *device)
                      "%s,nowait,nodelay,server", device);
             device = gdbstub_device_name;
         }
-#if !defined _WIN32 && !defined SWITCH
+#if !defined _WIN32 && !defined __SWITCH__
         else if (strcmp(device, "stdio") == 0) {
             struct sigaction act;
 

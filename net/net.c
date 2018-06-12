@@ -50,7 +50,7 @@
 #include "qapi/string-output-visitor.h"
 
 /* Net bridge is currently not supported for W32. */
-#if !defined(_WIN32) && !defined(SWITCH)
+#if !defined(_WIN32) && !defined(__SWITCH__)
 # define CONFIG_NET_BRIDGE
 #endif
 
@@ -58,7 +58,7 @@ static VMChangeStateEntry *net_change_state_entry;
 static QTAILQ_HEAD(, NetClientState) net_clients;
 
 const char *host_net_devices[] = {
-#ifndef SWITCH
+#ifndef __SWITCH__
     "tap",
 #endif
     "socket",
@@ -958,7 +958,7 @@ static int (* const net_client_init_fun[NET_CLIENT_DRIVER__MAX])(
 #ifdef CONFIG_SLIRP
         [NET_CLIENT_DRIVER_USER]      = net_init_slirp,
 #endif
-#ifndef SWITCH
+#ifndef __SWITCH__
         [NET_CLIENT_DRIVER_TAP]       = net_init_tap,
 #endif
         [NET_CLIENT_DRIVER_SOCKET]    = net_init_socket,

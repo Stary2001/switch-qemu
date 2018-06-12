@@ -1,9 +1,9 @@
 #ifndef QEMU_THREAD_HORIZON_H
 #define QEMU_THREAD_HORIZON_H
 
-#ifndef SWITCH_H_INCLUDED
+#ifndef __SWITCH___H_INCLUDED
 #define SWITCH_H_INCLUDED
-#ifdef SWITCH
+#ifdef __SWITCH__
 #undef BIT
 #endif
 #include <switch.h>

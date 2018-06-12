@@ -121,7 +121,7 @@ static void winsock_cleanup(void)
     WSACleanup();
 }
 
-#elif !defined SWITCH
+#elif !defined __SWITCH__
 
 static int get_dns_addr_cached(void *pdns_addr, void *cached_addr,
                                socklen_t addrlen,

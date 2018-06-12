@@ -13,7 +13,7 @@ typedef struct QemuThread QemuThread;
 
 #ifdef _WIN32
 #include "qemu/thread-win32.h"
-#elif !defined SWITCH
+#elif !defined __SWITCH__
 #include "qemu/thread-posix.h"
 #else
 #include "qemu/thread-horizon.h"

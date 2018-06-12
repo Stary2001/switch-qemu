@@ -3,7 +3,7 @@
 #ifndef QEMU_SOCKETS_H
 #define QEMU_SOCKETS_H
 
-#ifdef SWITCH
+#ifdef __SWITCH__
 #include <sys/socket.h>
 #include <netinet/in.h>
 #endif

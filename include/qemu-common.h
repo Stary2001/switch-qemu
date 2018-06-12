@@ -104,7 +104,7 @@ void cpu_exec_step_atomic(CPUState *cpu);
  */
 bool set_preferred_target_page_bits(int bits);
 
-#ifdef SWITCH
+#ifdef __SWITCH__
 #include <sys/_iovec.h>
 #endif
 /**

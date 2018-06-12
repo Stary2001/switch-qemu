@@ -69,7 +69,7 @@ fork_exec(struct socket *so, const char *ex, int do_pty)
     return 0;
 }
 
-#elif !defined(SWITCH)
+#elif !defined(__SWITCH__)
 
 /*
  * XXX This is ugly

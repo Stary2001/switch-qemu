@@ -14,7 +14,7 @@
 #ifndef IOV_H
 #define IOV_H
 
-#ifdef SWITCH
+#ifdef __SWITCH__
 #include <sys/_iovec.h>
 #endif
 

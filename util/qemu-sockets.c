@@ -788,7 +788,7 @@ static int vsock_parse(VsockSocketAddress *addr, const char *str,
 }
 #endif /* CONFIG_AF_VSOCK */
 
-#if !defined _WIN32 && !defined SWITCH
+#if !defined _WIN32 && !defined __SWITCH__
 
 static int unix_listen_saddr(UnixSocketAddress *saddr,
                              bool update_addr,
@@ -1153,7 +1153,7 @@ socket_sockaddr_to_address_inet(struct sockaddr_storage *sa,
 }
 
 
-#if !defined WIN32 && !defined(SWITCH)
+#if !defined WIN32 && !defined(__SWITCH__)
 static SocketAddress *
 socket_sockaddr_to_address_unix(struct sockaddr_storage *sa,
                                 socklen_t salen,
@@ -1202,7 +1202,7 @@ socket_sockaddr_to_address(struct sockaddr_storage *sa,
     case AF_INET6:
         return socket_sockaddr_to_address_inet(sa, salen, errp);
 
-#if !defined(WIN32) && !defined(SWITCH)
+#if !defined(WIN32) && !defined(__SWITCH__)
     case AF_UNIX:
         return socket_sockaddr_to_address_unix(sa, salen, errp);
 #endif /* WIN32 */

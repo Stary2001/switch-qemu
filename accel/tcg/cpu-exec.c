@@ -68,7 +68,7 @@ static void align_clocks(SyncClocks *sc, const CPUState *cpu)
     sc->last_cpu_icount = cpu_icount;
 
     if (sc->diff_clk > VM_CLOCK_ADVANCE) {
-#if !defined(_WIN32) && !defined(SWITCH)
+#if !defined(_WIN32) && !defined(__SWITCH__)
         struct timespec sleep_delay, rem_delay;
         sleep_delay.tv_sec = sc->diff_clk / 1000000000LL;
         sleep_delay.tv_nsec = sc->diff_clk % 1000000000LL;
@@ -77,7 +77,7 @@ static void align_clocks(SyncClocks *sc, const CPUState *cpu)
         } else {
             sc->diff_clk = 0;
         }
-#elif defined(SWITCH)
+#elif defined(__SWITCH__)
         svcSleepThread(sc->diff_clk);
         sc->diff_clk = 0;
 #else

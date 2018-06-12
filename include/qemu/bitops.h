@@ -19,7 +19,7 @@
 #define BITS_PER_BYTE           CHAR_BIT
 #define BITS_PER_LONG           (sizeof (unsigned long) * BITS_PER_BYTE)
 
-#ifdef SWITCH
+#ifdef __SWITCH__
 #undef BIT
 #endif
 

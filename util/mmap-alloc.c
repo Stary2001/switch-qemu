@@ -10,7 +10,7 @@
  * later.  See the COPYING file in the top-level directory.
  */
 
-#ifndef SWITCH
+#ifndef __SWITCH__
 #include "qemu/osdep.h"
 #include "qemu/mmap-alloc.h"
 #include "qemu/host-utils.h"

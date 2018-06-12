@@ -24,7 +24,7 @@ typedef char *caddr_t;
 # include <sys/bitypes.h>
 #endif
 
-#if !defined(_WIN32) && !defined(SWITCH)
+#if !defined(_WIN32) && !defined(__SWITCH__)
 #include <sys/uio.h>
 #endif
 
@@ -33,7 +33,7 @@ typedef char *caddr_t;
 #include <arpa/inet.h>
 #endif
 
-#if !defined(NO_UNIX_SOCKETS) && !defined(SWITCH)
+#if !defined(NO_UNIX_SOCKETS) && !defined(__SWITCH__)
 #include <sys/un.h>
 #endif
 #ifdef HAVE_SYS_SIGNAL_H

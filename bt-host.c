@@ -22,7 +22,7 @@
 #include "sysemu/bt.h"
 #include "qemu/main-loop.h"
 
-#if !defined(_WIN32) && !defined(SWITCH)
+#if !defined(_WIN32) && !defined(__SWITCH__)
 # include <sys/ioctl.h>
 # include <sys/uio.h>
 # ifdef CONFIG_BLUEZ

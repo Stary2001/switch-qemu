@@ -35,7 +35,7 @@
  * git://git.kernel.org/pub/scm/virt/kvm/kvm-unit-tests.git
 */
 
-#ifndef SWITCH
+#ifndef __SWITCH__
 
 #include "qemu/osdep.h"
 #include "hw/hw.h"

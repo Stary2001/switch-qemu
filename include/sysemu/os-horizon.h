@@ -26,7 +26,7 @@
 #ifndef QEMU_OS_POSIX_H
 #define QEMU_OS_POSIX_H
 
-#ifndef SWITCH
+#ifndef __SWITCH__
 #include <sys/mman.h>
 #endif
 #include <sys/socket.h>

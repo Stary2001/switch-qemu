@@ -31,13 +31,13 @@
 #include "chardev/char-win.h"
 #include "chardev/char-win-stdio.h"
 #else
-#ifndef SWITCH
+#ifndef __SWITCH__
 #include <termios.h>
 #endif
 #include "chardev/char-fd.h"
 #endif
 
-#if !defined _WIN32 && !defined SWITCH
+#if !defined _WIN32 && !defined __SWITCH__
 /* init terminal so that we can grab keys */
 static struct termios oldtty;
 static int old_fd0_flags;
@@ -134,7 +134,7 @@ static void char_stdio_class_init(ObjectClass *oc, void *data)
     ChardevClass *cc = CHARDEV_CLASS(oc);
 
     cc->parse = qemu_chr_parse_stdio;
-#if !defined _WIN32 && !defined SWITCH
+#if !defined _WIN32 && !defined __SWITCH__
     cc->open = qemu_chr_open_stdio;
     cc->chr_set_echo = qemu_chr_set_echo_stdio;
 #endif
@@ -142,7 +142,7 @@ static void char_stdio_class_init(ObjectClass *oc, void *data)
 
 static void char_stdio_finalize(Object *obj)
 {
-#if !defined _WIN32 && !defined SWITCH
+#if !defined _WIN32 && !defined __SWITCH__
     term_exit();
 #endif
 }

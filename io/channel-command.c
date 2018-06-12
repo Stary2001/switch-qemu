@@ -44,7 +44,7 @@ qio_channel_command_new_pid(int writefd,
 }
 
 
-#if !defined WIN32 && !defined SWITCH
+#if !defined WIN32 && !defined __SWITCH__
 QIOChannelCommand *
 qio_channel_command_new_spawn(const char *const argv[],
                               int flags,
@@ -152,7 +152,7 @@ qio_channel_command_new_spawn(const char *const argv[],
 }
 #endif /* WIN32 */
 
-#if !defined WIN32 && !defined SWITCH
+#if !defined WIN32 && !defined __SWITCH__
 static int qio_channel_command_abort(QIOChannelCommand *ioc,
                                      Error **errp)
 {
@@ -217,7 +217,7 @@ static void qio_channel_command_finalize(Object *obj)
     }
     ioc->writefd = ioc->readfd = -1;
     if (ioc->pid > 0) {
-#if !defined WIN32 && !defined SWITCH
+#if !defined WIN32 && !defined __SWITCH__
         qio_channel_command_abort(ioc, NULL);
 #endif
     }
@@ -315,7 +315,7 @@ static int qio_channel_command_close(QIOChannel *ioc,
         rv = -1;
     }
     cioc->writefd = cioc->readfd = -1;
-#if !defined WIN32 && !defined SWITCH
+#if !defined WIN32 && !defined __SWITCH__
     if (qio_channel_command_abort(cioc, errp) < 0) {
         return -1;
     }
