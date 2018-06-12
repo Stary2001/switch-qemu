@@ -26,11 +26,18 @@
 #include <wincrypt.h>
 static HCRYPTPROV hCryptProv;
 #else
+#ifdef __SWITCH__
+#include <switch.h>
+#else
 static int fd; /* a file handle to either /dev/urandom or /dev/random */
+#endif
 #endif
 
 int qcrypto_random_init(Error **errp)
 {
+#ifdef __SWITCH__
+	// libnx random needs no init!
+#else
 #ifndef _WIN32
     /* TBD perhaps also add support for BSD getentropy / Linux
      * getrandom syscalls directly */
@@ -51,7 +58,7 @@ int qcrypto_random_init(Error **errp)
         return -1;
     }
 #endif
-
+#endif
     return 0;
 }
 
@@ -59,6 +66,10 @@ int qcrypto_random_bytes(uint8_t *buf G_GNUC_UNUSED,
                          size_t buflen G_GNUC_UNUSED,
                          Error **errp)
 {
+#ifdef __SWITCH__
+	randomGet(buf, buflen);
+	return 0;
+#else
 #ifndef _WIN32
     int ret = -1;
     int got;
@@ -89,5 +100,6 @@ int qcrypto_random_bytes(uint8_t *buf G_GNUC_UNUSED,
     }
 
     return 0;
+#endif
 #endif
 }
