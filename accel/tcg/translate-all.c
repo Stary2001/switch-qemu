@@ -651,6 +651,13 @@ static inline void *alloc_code_gen_buffer(void)
                         PAGE_EXECUTE_READWRITE);
     return buf;
 }
+#elif defined(__SWITCH__)
+static inline void *alloc_code_gen_buffer(void)
+{
+    size_t size = tcg_ctx->code_gen_buffer_size;
+    void *buf = malloc(size);
+    return buf;
+}
 #elif !defined(__SWITCH__)
 static inline void *alloc_code_gen_buffer(void)
 {

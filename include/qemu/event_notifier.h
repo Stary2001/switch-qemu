@@ -19,17 +19,12 @@
 #include <windows.h>
 #endif
 
-#ifdef __SWITCH__
-#include <switch.h>
-#endif
-
 struct EventNotifier {
 #ifdef _WIN32
     HANDLE event;
 #else
 #ifdef __SWITCH__
-    Handle wait_handle;
-    Handle sig_handle;
+    void *event; // ewwww
 #else
     int rfd;
     int wfd;

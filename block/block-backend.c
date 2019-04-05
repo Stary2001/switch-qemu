@@ -1101,8 +1101,9 @@ int coroutine_fn blk_co_preadv(BlockBackend *blk, int64_t offset,
         throttle_group_co_io_limits_intercept(&blk->public.throttle_group_member,
                 bytes, false);
     }
-
+    printf("bdrv_co_preadv\n");
     ret = bdrv_co_preadv(blk->root, offset, bytes, qiov, flags);
+    printf("bdrv_co_preadv done\n");
     bdrv_dec_in_flight(bs);
     return ret;
 }
@@ -1183,6 +1184,7 @@ static int blk_prw(BlockBackend *blk, int64_t offset, uint8_t *buf,
         .ret    = NOT_DONE,
     };
 
+    printf("?? blk_prw\n");
     if (qemu_in_coroutine()) {
         /* Fast-path if already in coroutine context */
         co_entry(&rwco);
@@ -1338,6 +1340,7 @@ BlockAIOCB *blk_aio_pwrite_zeroes(BlockBackend *blk, int64_t offset,
 
 int blk_pread(BlockBackend *blk, int64_t offset, void *buf, int count)
 {
+    printf("Starting pread!\n");
     int ret = blk_prw(blk, offset, buf, count, blk_read_entry, 0);
     if (ret < 0) {
         return ret;

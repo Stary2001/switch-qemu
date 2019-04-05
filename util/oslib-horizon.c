@@ -25,6 +25,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include <malloc.h>
 
 #include "qemu/osdep.h"
 #include <glib/gprintf.h>
@@ -77,7 +78,7 @@ void *qemu_try_memalign(size_t alignment, size_t size)
     }
 
     ptr = memalign(alignment, size);
-
+    fprintf(stderr, "memalign returned %llx!\n", ptr);
     trace_qemu_memalign(alignment, size, ptr);
     return ptr;
 }
@@ -90,7 +91,13 @@ void *qemu_memalign(size_t alignment, size_t size)
 /* alloc shared memory pages */
 void *qemu_anon_ram_alloc(size_t size, uint64_t *alignment)
 {
-    return NULL;
+    size_t align = QEMU_VMALLOC_ALIGN;
+    void *ptr = memalign(align, size);
+    if(alignment)
+    {
+        *alignment = align;
+    }
+    return ptr;
 }
 
 void qemu_vfree(void *ptr)
@@ -102,7 +109,7 @@ void qemu_vfree(void *ptr)
 void qemu_anon_ram_free(void *ptr, size_t size)
 {
     trace_qemu_anon_ram_free(ptr, size);
-    //qemu_ram_munmap(ptr, size);
+    free(ptr);
 }
 
 void qemu_set_block(int fd)
@@ -226,9 +233,10 @@ char *qemu_get_pid_name(pid_t pid)
 
 void *qemu_alloc_stack(size_t *sz)
 {
-    return NULL;
+    return memalign(0x1000, *sz);
 }
 
 void qemu_free_stack(void *stack, size_t sz)
 {
+    free(stack);
 }

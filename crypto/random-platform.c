@@ -27,7 +27,7 @@
 static HCRYPTPROV hCryptProv;
 #else
 #ifdef __SWITCH__
-#include <switch.h>
+#include "switch_wrapper.h"
 #else
 static int fd; /* a file handle to either /dev/urandom or /dev/random */
 #endif

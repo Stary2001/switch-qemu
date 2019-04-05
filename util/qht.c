@@ -342,7 +342,7 @@ static struct qht_map *qht_map_create(size_t n_buckets)
     if (unlikely(map->n_added_buckets_threshold == 0)) {
         map->n_added_buckets_threshold = 1;
     }
-
+    
     map->buckets = qemu_memalign(QHT_BUCKET_ALIGN,
                                  sizeof(*map->buckets) * n_buckets);
     for (i = 0; i < n_buckets; i++) {

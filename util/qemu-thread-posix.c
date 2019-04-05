@@ -485,7 +485,9 @@ static void __attribute__((constructor)) qemu_thread_atexit_init(void)
 static void qemu_thread_set_name(QemuThread *thread, const char *name)
 {
 #ifdef CONFIG_PTHREAD_SETNAME_NP
+#ifndef __SWITCH__
     pthread_setname_np(thread->thread, name);
+#endif
 #endif
 }
 
@@ -493,6 +495,9 @@ void qemu_thread_create(QemuThread *thread, const char *name,
                        void *(*start_routine)(void*),
                        void *arg, int mode)
 {
+    printf("thread_create %s?\n", name);
+    fflush(stdout);
+
     sigset_t set, oldset;
     int err;
     pthread_attr_t attr;
@@ -502,25 +507,36 @@ void qemu_thread_create(QemuThread *thread, const char *name,
         error_exit(err, __func__);
     }
 
+#ifndef __SWITCH__
     /* Leave signal handling to the iothread.  */
     sigfillset(&set);
     pthread_sigmask(SIG_SETMASK, &set, &oldset);
+#endif
     err = pthread_create(&thread->thread, &attr, start_routine, arg);
     if (err)
+    {
+        printf("pthread error\n");
+	fflush(stdout);
         error_exit(err, __func__);
-
+    }
     if (name_threads) {
         qemu_thread_set_name(thread, name);
     }
 
     if (mode == QEMU_THREAD_DETACHED) {
+#ifdef __SWITCH__
+/*	printf("Detached threads don't work!\n");
+	error_exit(0, __func__);*/
+#else
         err = pthread_detach(thread->thread);
         if (err) {
             error_exit(err, __func__);
         }
+#endif
     }
+#ifndef __SWITCH__
     pthread_sigmask(SIG_SETMASK, &oldset, NULL);
-
+#endif
     pthread_attr_destroy(&attr);
 }
 

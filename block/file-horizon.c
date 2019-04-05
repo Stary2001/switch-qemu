@@ -1215,7 +1215,9 @@ static int paio_submit_co(BlockDriverState *bs, int fd,
 
     trace_paio_submit_co(offset, bytes, type);
     pool = aio_get_thread_pool(bdrv_get_aio_context(bs));
-    return thread_pool_submit_co(pool, aio_worker, acb);
+    int a = thread_pool_submit_co(pool, aio_worker, acb);
+    printf("submitted co ot threadpool\n");
+    return a;
 }
 
 static BlockAIOCB *paio_submit(BlockDriverState *bs, int fd,
