@@ -3,12 +3,12 @@
 void userAppInit(void)
 {
 	twiliInitialize();
-	//socketInitializeDefault();
-	//nxlinkStdio();
+	socketInitializeDefault();
+	nxlinkStdio();
 }
 
 void userAppExit(void)
 {
 	twiliExit();
-	//socketExit();
+	socketExit();
 }

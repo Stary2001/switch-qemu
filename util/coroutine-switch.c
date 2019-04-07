@@ -32,7 +32,7 @@ typedef struct {
     Coroutine base;
     void *stack;
     size_t stack_size;
-    uint64_t context[10];
+    uint64_t context[11]; // r19-r29
     uint64_t sp;
     uint64_t lr;
     uint64_t initial_x0;
@@ -76,7 +76,7 @@ static __thread CoroutineSwitch leader;
 static __thread Coroutine *current;
 
 void bad_coroutine_switch(uint64_t *context_from, uint64_t *context_to);
-CoroutineAction qemu_coroutine_switch(Coroutine *from_, Coroutine *to_,
+CoroutineAction  __attribute__((noinline)) qemu_coroutine_switch(Coroutine *from_, Coroutine *to_,
                                       CoroutineAction action)
 {
     CoroutineSwitch *from = DO_UPCAST(CoroutineSwitch, base, from_);
