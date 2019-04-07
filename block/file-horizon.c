@@ -858,43 +858,6 @@ static ssize_t handle_aiocb_flush(RawPosixAIOData *aiocb)
     return 0;
 }
 
-static bool preadv_present = false;
-
-static ssize_t
-qemu_preadv(int fd, const struct iovec *iov, int nr_iov, off_t offset)
-{
-    return -ENOSYS;
-}
-
-static ssize_t
-qemu_pwritev(int fd, const struct iovec *iov, int nr_iov, off_t offset)
-{
-    return -ENOSYS;
-}
-
-static ssize_t handle_aiocb_rw_vector(RawPosixAIOData *aiocb)
-{
-    ssize_t len;
-
-    do {
-        if (aiocb->aio_type & QEMU_AIO_WRITE)
-            len = qemu_pwritev(aiocb->aio_fildes,
-                               aiocb->aio_iov,
-                               aiocb->aio_niov,
-                               aiocb->aio_offset);
-         else
-            len = qemu_preadv(aiocb->aio_fildes,
-                              aiocb->aio_iov,
-                              aiocb->aio_niov,
-                              aiocb->aio_offset);
-    } while (len == -1 && errno == EINTR);
-
-    if (len == -1) {
-        return -errno;
-    }
-    return len;
-}
-
 /*
  * Read/writes the data to/from a given linear buffer.
  *
@@ -960,14 +923,6 @@ static ssize_t handle_aiocb_rw(RawPosixAIOData *aiocb)
          * Try preadv/pwritev first and fall back to linearizing the
          * buffer if it's not supported.
          */
-        if (preadv_present) {
-            nbytes = handle_aiocb_rw_vector(aiocb);
-            if (nbytes == aiocb->aio_nbytes ||
-                (nbytes < 0 && nbytes != -ENOSYS)) {
-                return nbytes;
-            }
-            preadv_present = false;
-        }
 
         /*
          * XXX(hch): short read/write.  no easy way to handle the reminder
@@ -1215,9 +1170,7 @@ static int paio_submit_co(BlockDriverState *bs, int fd,
 
     trace_paio_submit_co(offset, bytes, type);
     pool = aio_get_thread_pool(bdrv_get_aio_context(bs));
-    int a = thread_pool_submit_co(pool, aio_worker, acb);
-    printf("submitted co ot threadpool\n");
-    return a;
+    return thread_pool_submit_co(pool, aio_worker, acb);
 }
 
 static BlockAIOCB *paio_submit(BlockDriverState *bs, int fd,

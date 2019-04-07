@@ -78,7 +78,6 @@ void *qemu_try_memalign(size_t alignment, size_t size)
     }
 
     ptr = memalign(alignment, size);
-    fprintf(stderr, "memalign returned %llx!\n", ptr);
     trace_qemu_memalign(alignment, size, ptr);
     return ptr;
 }

@@ -865,10 +865,7 @@ static int coroutine_fn bdrv_driver_preadv(BlockDriverState *bs,
     }
 
     if (drv->bdrv_co_preadv) {
-        printf("bdrv_co_preadv from driver\n");
-        int a = drv->bdrv_co_preadv(bs, offset, bytes, qiov, flags);
-        printf("bdrv_co_preadv from driver done\n");
-        return a;
+        return drv->bdrv_co_preadv(bs, offset, bytes, qiov, flags);
     }
 
     sector_num = offset >> BDRV_SECTOR_BITS;

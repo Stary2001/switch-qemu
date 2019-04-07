@@ -693,11 +693,7 @@ static int find_image_format(BlockBackend *file, const char *filename,
         *pdrv = &bdrv_raw;
         return ret;
     }
-    printf("Finding image format!!\n");
-    fflush(stdout);
     ret = blk_pread(file, 0, buf, sizeof(buf));
-    printf("Good, that returned %i!\n", ret);
-    fflush(stdout);
     if (ret < 0) {
         error_setg_errno(errp, -ret, "Could not read image for determining its "
                          "format");

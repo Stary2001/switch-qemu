@@ -41,7 +41,6 @@ typedef struct {
 
 static void coroutine_trampoline(void *co_)
 {
-    printf("Hello from the coroutine trampoline! we are %p\n", co_);
     Coroutine *co = co_;
 
     while (true) {
@@ -59,8 +58,6 @@ Coroutine *qemu_coroutine_new(void)
     co->initial_x0 = co;
     co->sp = co->stack + co->stack_size;
     co->lr = coroutine_trampoline;
-
-    printf("new coroutine (%p) with sp=%p pc=%p\n", co, co->sp, co->lr);
 
     return &co->base;
 }
@@ -86,17 +83,7 @@ CoroutineAction  __attribute__((noinline)) qemu_coroutine_switch(Coroutine *from
 
     to->action = action;
 
-    printf("we are switching to coroutine %p from %p\n", to, from);
-    printf("coro has stack %p and pc %p\n", to->sp, to->lr - (uint64_t)&qemu_coroutine_switch);
-    fflush(stdout);
-        
-    uint64_t sp;
-    asm volatile ("mov %0, sp" : "=r"(sp));
-    printf("sp before call = %p\n", sp);
-
     bad_coroutine_switch(from->context, to->context);
-    printf("out of the coroutine switch! from->action is %i\n", from->action);
-    fflush(stdout);
 
     return from->action;
 }
@@ -105,8 +92,6 @@ Coroutine *qemu_coroutine_self(void)
 {
     if (!current) {
         current = &leader.base;
-        printf("ah shit we made a coroutine %p\n", current);
-        fflush(stdout);
     }
     return current;
 }

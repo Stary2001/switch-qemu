@@ -46,3 +46,8 @@ int event_notifier_test_and_clear(EventNotifier *e)
     }
     return false;
 }
+
+void* event_notifier_get_event(EventNotifier *e)
+{
+    return e->event;
+}

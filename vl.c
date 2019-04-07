@@ -3091,14 +3091,16 @@ static void register_global_properties(MachineState *ms)
 int main(int argc, char **argv, char **envp)
 {
     chdir("sdmc:/switch");
-    argc = 5;
-    argv = malloc(8 * 6);
+    argc = 7;
+    argv = malloc(8 * 8);
     argv[0] = "sdmc:/switch/qemu.nro";
     argv[1] = "-cdrom";
-    argv[2] = "wandows_95.iso";
+    argv[2] = "wandows_98.iso";
     argv[3] = "-vga";
     argv[4] = "cirrus";
-    argv[5] = NULL;
+    argv[5] = "-boot";
+    argv[6] = "d";
+    argv[7] = NULL;
 
     int i;
     int snapshot, linux_boot;

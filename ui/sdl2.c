@@ -114,7 +114,6 @@ void sdl2_window_resize(struct sdl2_console *scon)
     if (!scon->real_window) {
         return;
     }
-
     SDL_SetWindowSize(scon->real_window,
                       surface_width(scon->surface),
                       surface_height(scon->surface));

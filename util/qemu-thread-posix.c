@@ -495,9 +495,6 @@ void qemu_thread_create(QemuThread *thread, const char *name,
                        void *(*start_routine)(void*),
                        void *arg, int mode)
 {
-    printf("thread_create %s?\n", name);
-    fflush(stdout);
-
     sigset_t set, oldset;
     int err;
     pthread_attr_t attr;

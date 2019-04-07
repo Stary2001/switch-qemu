@@ -39,10 +39,12 @@ void event_notifier_cleanup(EventNotifier *);
 int event_notifier_set(EventNotifier *);
 int event_notifier_test_and_clear(EventNotifier *);
 
-#if defined CONFIG_POSIX || defined CONFIG_HORIZON
+#if defined CONFIG_POSIX
 void event_notifier_init_fd(EventNotifier *, int fd);
 int event_notifier_get_fd(const EventNotifier *);
-#else
+#elif defined CONFIG_HORIZON
+void *event_notifier_get_event(EventNotifier*);
+#elif defined CONFIG_WIN32
 HANDLE event_notifier_get_handle(EventNotifier *);
 #endif
 

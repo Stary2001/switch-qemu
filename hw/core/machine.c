@@ -789,7 +789,6 @@ void machine_run_board_init(MachineState *machine)
             exit(1);
         }
     }
-    printf("go init!!!\n");
     machine_class->init(machine);
 }
 

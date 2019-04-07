@@ -172,7 +172,120 @@ int qemu_init_main_loop(Error **errp)
 
 static int max_priority;
 
-#ifndef _WIN32
+#if defined __SWITCH__
+#include "switch_wrapper.h"
+/* Polling handling */
+
+void qemu_fd_register(int fd)
+{
+    printf("fd register stub lol\n");
+}
+
+static int pollfds_fill(GArray *pollfds, fd_set *rfds, fd_set *wfds,
+                        fd_set *xfds)
+{
+    int nfds = -1;
+    int i;
+
+    for (i = 0; i < pollfds->len; i++) {
+        GPollFD *pfd = &g_array_index(pollfds, GPollFD, i);
+        int fd = pfd->fd;
+        int events = pfd->events;
+        if (events & G_IO_IN) {
+            FD_SET(fd, rfds);
+            nfds = MAX(nfds, fd);
+        }
+        if (events & G_IO_OUT) {
+            FD_SET(fd, wfds);
+            nfds = MAX(nfds, fd);
+        }
+        if (events & G_IO_PRI) {
+            FD_SET(fd, xfds);
+            nfds = MAX(nfds, fd);
+        }
+    }
+    return nfds;
+}
+
+static void pollfds_poll(GArray *pollfds, int nfds, fd_set *rfds,
+                         fd_set *wfds, fd_set *xfds)
+{
+    int i;
+
+    for (i = 0; i < pollfds->len; i++) {
+        GPollFD *pfd = &g_array_index(pollfds, GPollFD, i);
+        int fd = pfd->fd;
+        int revents = 0;
+
+        if (FD_ISSET(fd, rfds)) {
+            revents |= G_IO_IN;
+        }
+        if (FD_ISSET(fd, wfds)) {
+            revents |= G_IO_OUT;
+        }
+        if (FD_ISSET(fd, xfds)) {
+            revents |= G_IO_PRI;
+        }
+        pfd->revents = revents & pfd->events;
+    }
+}
+
+static int os_host_main_loop_wait(int64_t timeout)
+{
+    GMainContext *context = g_main_context_default();
+    GPollFD poll_fds[1024 * 2]; /* this is probably overkill */
+    int select_ret = 0;
+    int g_poll_ret, ret, i, n_poll_fds;
+    gint poll_timeout;
+    int64_t poll_timeout_ns;
+    static struct timeval tv0;
+    fd_set rfds, wfds, xfds;
+    int nfds;
+
+    g_main_context_acquire(context);
+
+    FD_ZERO(&rfds);
+    FD_ZERO(&wfds);
+    FD_ZERO(&xfds);
+    nfds = pollfds_fill(gpollfds, &rfds, &wfds, &xfds);
+    if (nfds >= 0) {
+        select_ret = select(nfds + 1, &rfds, &wfds, &xfds, &tv0);
+        if (select_ret != 0) {
+            timeout = 0;
+        }
+        if (select_ret > 0) {
+            pollfds_poll(gpollfds, nfds, &rfds, &wfds, &xfds);
+        }
+    }
+
+    g_main_context_prepare(context, &max_priority);
+    n_poll_fds = g_main_context_query(context, max_priority, &poll_timeout,
+                                      poll_fds, ARRAY_SIZE(poll_fds));
+    g_assert(n_poll_fds <= ARRAY_SIZE(poll_fds));
+
+    if (poll_timeout < 0) {
+        poll_timeout_ns = -1;
+    } else {
+        poll_timeout_ns = (int64_t)poll_timeout * (int64_t)SCALE_MS;
+    }
+
+    poll_timeout_ns = qemu_soonest_timeout(poll_timeout_ns, timeout);
+
+    qemu_mutex_unlock_iothread();
+
+    // we dont care about events. this is dumb. really fucking dumb.
+    svcSleepThread(poll_timeout_ns);
+    qemu_mutex_lock_iothread();
+
+    if (g_main_context_check(context, max_priority, poll_fds, n_poll_fds)) {
+        g_main_context_dispatch(context);
+    }
+    
+    g_main_context_release(context);
+
+    return select_ret || g_poll_ret;
+}
+#elif !defined(_WIN32)
 static int glib_pollfds_idx;
 static int glib_n_poll_fds;
 
@@ -464,18 +577,7 @@ static int os_host_main_loop_wait(int64_t timeout)
 
     qemu_mutex_unlock_iothread();
     g_poll_ret = qemu_poll_ns(poll_fds, n_poll_fds + w->num, poll_timeout_ns);
-
     qemu_mutex_lock_iothread();
-    if (g_poll_ret > 0) {
-        for (i = 0; i < w->num; i++) {
-            w->revents[i] = poll_fds[n_poll_fds + i].revents;
-        }
-        for (i = 0; i < w->num; i++) {
-            if (w->revents[i] && w->func[i]) {
-                w->func[i](w->opaque[i]);
-            }
-        }
-    }
 
     if (g_main_context_check(context, max_priority, poll_fds, n_poll_fds)) {
         g_main_context_dispatch(context);
@@ -485,7 +587,7 @@ static int os_host_main_loop_wait(int64_t timeout)
 
     return select_ret || g_poll_ret;
 }
-#endif
+#endif // !win32
 
 void main_loop_wait(int nonblocking)
 {
@@ -511,7 +613,6 @@ void main_loop_wait(int nonblocking)
     timeout_ns = qemu_soonest_timeout(timeout_ns,
                                       timerlistgroup_deadline_ns(
                                           &main_loop_tlg));
-
     ret = os_host_main_loop_wait(timeout_ns);
     slirp_pollfds_poll(gpollfds, (ret < 0));
 
